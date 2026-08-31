@@ -1,0 +1,76 @@
+# ── Version Control ──────────────────────────────────────────
+.git
+.gitattributes
+.gitignore
+
+# ── IDE / Editor ─────────────────────────────────────────────
+.idea/
+.vscode/
+.zed/
+.fleet/
+.nova/
+.phpactor.json
+_editorconfig
+Thumbs.db
+.DS_Store
+
+# ── Environment & Secrets ────────────────────────────────────
+.env
+.env.backup
+.env.production
+auth.json
+
+# ── Node / Frontend Dependencies ─────────────────────────────
+node_modules/
+
+# ── PHP Dependencies (rebuilt in container) ──────────────────
+vendor/
+
+# ── Build Artifacts ──────────────────────────────────────────
+public/build/
+public/hot
+public/storage
+storage/*.key
+storage/pail
+storage/framework/sessions/*
+storage/framework/cache/*
+storage/framework/views/*
+!storage/framework/sessions/.gitignore
+!storage/framework/cache/.gitignore
+!storage/framework/views/.gitignore
+
+# ── Database Files ───────────────────────────────────────────
+*.sqlite
+*.db
+database/*.sqlite
+database/*.db
+
+# ── Logs ─────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+
+# ── Docker (avoid recursive context) ────────────────────────
+Dockerfile
+docker-compose*.yml
+compose*.yml
+.dockerignore
+
+# ── Documentation & Test Artifacts ───────────────────────────
+README.md
+CONTRIBUTING.md
+CHANGELOG.md
+LICENSE
+.phpunit.result.cache
+.phpunit.cache/
+tests/
+HASIL-*.txt
+
+# ── PowerShell Scripts ──────────────────────────────────────
+*.ps1
+
+# ── Backup & Misc ───────────────────────────────────────────
+backup-controller/
+Homestead.json
+Homestead.yaml
+_ide_helper.php
+spmi
