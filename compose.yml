@@ -1,0 +1,76 @@
+# ─────────────────────────────────────────────────────────────
+#  Docker Compose — Development Environment
+#  Sistem SPMI  (Laravel 13 / PHP 8.4 / MySQL 8.4)
+#
+#  No bind mounts are used, so this works on any Docker engine
+#  (Linux, macOS, Windows — including Windows daemons without
+#  WSL 2 / Docker Desktop). Source code and frontend assets are
+#  baked into the app image at build time.
+#
+#  Usage:
+#    docker compose up -d --build
+#    docker compose exec app php artisan key:generate
+#    docker compose exec app php artisan migrate
+#
+#  After editing code or assets, apply changes with:
+#    docker compose up -d --build
+# ─────────────────────────────────────────────────────────────
+
+name: sistem-spmi
+
+services:
+  # ── Laravel Application ────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: spmi-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - spmi-net
+    healthcheck:
+      test: ["CMD", "php", "-r", "echo 'ok';"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ── MySQL 8.4 ─────────────────────────────────────────────
+  # Credentials must match the DB_* values in .env.example,
+  # which is baked into the app image as its .env file.
+  mysql:
+    image: mysql:8.4
+    container_name: spmi-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: sistem_spmi
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - spmi-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+# ── Volumes ──────────────────────────────────────────────────
+volumes:
+  mysql-data:
+
+# ── Networks ─────────────────────────────────────────────────
+networks:
+  spmi-net:
+    driver: bridge

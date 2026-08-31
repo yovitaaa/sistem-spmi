@@ -1,58 +1,122 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
+# Sistem SPMI
+
+Sistem standar penetapan mutu internal (SPMI) — a Laravel-based web application for managing internal quality assurance standards.
+
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <a href="https://www.php.net/releases/8.4/en.php"><img src="https://img.shields.io/badge/PHP-%3E%3D8.4-777BB4?logo=php&logoColor=white" alt="PHP"></a>
+  <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white" alt="Laravel"></a>
+  <a href="https://dev.mysql.com/doc/relnotes/mysql/8.4/en/"><img src="https://img.shields.io/badge/MySQL-8.4-4479A1?logo=mysql&logoColor=white" alt="MySQL"></a>
+  <a href="https://vitejs.dev"><img src="https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white" alt="Vite"></a>
+  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS"></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node.js-22-339933?logo=node.js&logoColor=white" alt="Node.js"></a>
+  <a href="https://getcomposer.org"><img src="https://img.shields.io/badge/Composer-2-885630?logo=composer&logoColor=white" alt="Composer"></a>
+  <a href="https://phpunit.de"><img src="https://img.shields.io/badge/PHPUnit-12-6B9F3B?logo=phpunit&logoColor=white" alt="PHPUnit"></a>
+  <a href="https://www.docker.com"><img src="https://img.shields.io/badge/Docker-24+-2496ED?logo=docker&logoColor=white" alt="Docker"></a>
 </p>
 
-## About Laravel
+## Tech Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Runtime | PHP | >= 8.4 |
+| Framework | Laravel | 13 |
+| Database | MySQL | 8.4 |
+| Frontend | Vite + Tailwind CSS | 8 + 4 |
+| Package Manager | Composer + npm | 2 |
+| Testing | PHPUnit | 12 |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Getting Started
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Prerequisites
 
-## Learning Laravel
+- [Docker](https://docs.docker.com/get-docker/) >= 24
+- [Docker Compose](https://docs.docker.com/compose/install/) >= 2 (included with Docker Desktop)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Quick Start
 
 ```bash
-composer require laravel/boost --dev
+git clone <repo-url> && cd sistem-spmi
 
-php artisan boost:install
+cp .env.example .env
+
+docker compose up -d --build
+
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+The application will be available at **http://localhost:8000**.
+
+### Development
+
+The `compose.yml` uses **no bind mounts**, so it runs on any Docker engine — Linux, macOS, or Windows (including Windows Docker daemons without WSL 2 or Docker Desktop). Source code and frontend assets are baked into the image at build time.
+
+| Service | Purpose | Port |
+|---------|---------|------|
+| `app` | Laravel PHP application server | 8000 |
+| `mysql` | MySQL 8.4 database | 3306 |
+
+```bash
+# Start everything
+docker compose up -d --build
+
+# Follow logs
+docker compose logs -f
+
+# Run artisan commands
+docker compose exec app php artisan <command>
+
+# Run tests
+docker compose exec app php artisan test
+
+# Open a shell inside the app container
+docker compose exec app bash
+```
+
+> **Note:** Because there are no bind mounts, applying code or asset changes requires a rebuild. Layer caching makes this fast — only the changed steps re-run:
+>
+> ```bash
+> docker compose up -d --build
+> ```
+
+### Database
+
+The development stack uses **MySQL 8.4** by default. Connection details are configured in `.env`:
+
+```
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=sistem_spmi
+DB_USERNAME=laravel
+DB_PASSWORD=password
+```
+
+To reset the database:
+
+```bash
+docker compose exec app php artisan migrate:fresh --seed
+```
+
+## Project Structure
+
+```
+sistem-spmi/
+├── app/              # Application logic (Models, Http, Services)
+├── bootstrap/        # Framework bootstrap
+├── config/           # Configuration files
+├── database/         # Migrations, factories, seeders
+├── public/           # Web root (index.php, assets)
+├── resources/        # Views, CSS, JS
+├── routes/           # Route definitions
+├── storage/          # Logs, cache, compiled views
+├── tests/            # Unit & Feature tests
+├── Dockerfile        # Multi-stage build (PHP 8.4 + Node 22)
+└── compose.yml       # Docker Compose development stack
+```
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions and guidelines.
